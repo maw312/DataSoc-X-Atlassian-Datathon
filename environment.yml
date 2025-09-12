@@ -1,0 +1,28 @@
+name: atlassian-datathon
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.11
+  - jupyter
+  - ipykernel
+  - numpy
+  - pandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - pytorch
+  - torchvision
+  - torchaudio
+  - lightgbm
+  - xgboost
+  - imbalanced-learn
+  - scipy
+  - statsmodels
+  - openpyxl   # for Excel I/O
+  - pip
+  - pip:
+      - shap       # model explainability
+      - plotly     # interactive charts
+      - lifelines  # survival analysis (time-to-churn)
+      - optuna     # hyperparameter tuning
