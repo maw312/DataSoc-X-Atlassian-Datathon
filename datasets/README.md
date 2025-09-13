@@ -38,7 +38,7 @@
 | feature_name | Feature being used |
 | action | Type of action performed |
 | duration_ms | Event duration in milliseconds |
-| latency_ms | Response latency in milliseconds |
+| latency_ms | Response latency inwh milliseconds |
 | success | Whether event completed successfully |
 
 ### billing.csv
