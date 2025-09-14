@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Discount Helper — Upgrade Probability</title>
+  <title>DISCOUNT CRUSHERS APPLICATION🥇🥇🥇</title>
   <style>
     :root{
       --B900:#172B4D; --B700:#0747A6; --B600:#0052CC; --B500:#0065FF; --B300:#2684FF;
@@ -162,43 +162,40 @@
     <div class="topbar panel">
       <div class="brand">
         <div class="badge">A</div>
-        <div>Discount Helper — Upgrade Probability</div>
-      </div>
-      <div class="links">
-        <a href="#">Docs</a><a href="#">Models</a><a href="#">Team</a>
+        <div><b>C</b>ustomer <b>R</b>etention and <b>U</b>psell <b>S</b>trategy for <b>H</b>igh <b>R</b>OI (<b>CRUSHR</b>)🥇🥇🥇</div>
       </div>
     </div>
 
     <div class="grid">
       <section class="panel">
-        <h1>Should we offer a discount?</h1>
-        <p class="lead">Enter current stats. We’ll estimate upgrade probability with and without a discount, and make a recommendation.</p>
+        <h1><b>C</b>ustomer <b>R</b>etention and <b>U</b>psell <b>S</b>trategy for <b>H</b>igh <b>R</b>OI (<b>CRUSHR</b>)</h1>
+        <p class="lead">Enter current stats. We’ll estimate upgrade probability with and without a discount, and let <b>CRUSHR</b> make the optimal recommendation.</p>
 
         <form method="POST" action="/" id="form">
           <div class="row two">
             <div>
-              <label>Active seats</label>
-              <input name="seats" type="number" min="0" step="1" placeholder="e.g. 12" required>
+              <label>Active Seats</label>
+              <input name="seats" type="number" min="0" step="1" placeholder="e.g. 1" required>
             </div>
             <div>
-              <label>Support tickets (period)</label>
-              <input name="support_tickets" type="number" min="0" step="1" placeholder="e.g. 3" required>
+              <label>Support Tickets Filed</label>
+              <input name="support_tickets" type="number" min="0" step="1" placeholder="e.g. 1" required>
             </div>
           </div>
 
           <div class="row" style="margin-top:10px">
             <div>
-              <label>Total actions / events (period)</label>
-              <input name="total" type="number" min="0" step="1" placeholder="e.g. 480" required>
+              <label>Total Actions</label>
+              <input name="total" type="number" min="0" step="1" placeholder="e.g. 1" required>
             </div>
           </div>
 
           <div style="margin-top:14px; display:flex; gap:12px; align-items:center">
             <button class="btn" id="btn" type="submit">
               <span class="spinner" aria-hidden="true"></span>
-              <span class="btntxt">Calculate</span>
+              <span class="btntxt">Run CRUSHR 😈</span>
             </button>
-            <span style="color:#cfe0ff; font-size:14px">We never ask if discount is applied; we model both scenarios for you.</span>
+            <span style="color:#cfe0ff; font-size:14px">Get probabilities of upgrade with and without a discount!</span>
           </div>
         </form>
 
@@ -209,18 +206,18 @@
         <div id="result" class="result {% if result %}show{% endif %}">
           {% if result %}
             <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap">
-              <div style="font-weight:800; letter-spacing:.2px">Predicted upgrade probabilities</div>
+              <div style="font-weight:800; letter-spacing:.2px">🔥 CRUSHR Predictions 🔥</div>
               <div class="pill {{ result.tone }}">{{ result.decision_text }}</div>
             </div>
 
             <div class="bars">
-              <div class="rowcap"><div>Upgrade (no discount)</div><div>{{ (result.p_no_disc*100)|round(1) }}%</div></div>
+              <div class="rowcap"><div>Upgrade (<b>Without Discount</b>)</div><div>{{ (result.p_no_disc*100)|round(1) }}%</div></div>
               <div class="bar"><span style="inset:0 {{ (100 - result.p_no_disc*100)|round(1) }}% 0 0"></span></div>
 
-              <div class="rowcap"><div>Upgrade (with discount)</div><div>{{ (result.p_with_disc*100)|round(1) }}%</div></div>
+              <div class="rowcap"><div>Upgrade (<b>With Discount</b>)</div><div>{{ (result.p_with_disc*100)|round(1) }}%</div></div>
               <div class="bar"><span style="inset:0 {{ (100 - result.p_with_disc*100)|round(1) }}% 0 0"></span></div>
 
-              <div class="rowcap"><div>Δ Lift from discount</div><div>{{ (result.delta*100)|round(1) }} pp</div></div>
+              <div class="rowcap"><div>% Increase with Discount</div><div>{{ (result.delta*100)|round(1) }}%</div></div>
               <div class="bar">
                 <span style="inset:0 {{ (100 - (((result.delta if result.delta > 0 else 0)*100))|round(1)) }}% 0 0;
                               background:linear-gradient(90deg, rgba(54,179,126,.3), rgba(54,179,126,.95))"></span>
@@ -233,16 +230,16 @@
                 <div style="font-weight:800">{{ result.inputs.seats }}</div>
               </div>
               <div class="panel" style="padding:12px">
-                <div style="font-size:12px; color:#b9c7e6">Support tickets</div>
+                <div style="font-size:12px; color:#b9c7e6">Support Tickets</div>
                 <div style="font-weight:800">{{ result.inputs.support_tickets }}</div>
               </div>
               <div class="panel" style="padding:12px">
-                <div style="font-size:12px; color:#b9c7e6">Total actions</div>
+                <div style="font-size:12px; color:#b9c7e6">Total Actions</div>
                 <div style="font-weight:800">{{ result.inputs.total }}</div>
               </div>
             </div>
           {% else %}
-            <div style="color:#cfe0ff">No prediction yet — submit the form to see probabilities.</div>
+            <div style="color:#cfe0ff">No Predictions Yet - Let CRUSHR know your variables to get predicting!</div>
           {% endif %}
         </div>
       </section>
@@ -250,7 +247,7 @@
       <aside class="panel">
         <h2 style="margin:0 0 8px">Decision rule</h2>
         <p class="lead" style="margin:0 0 10px; font-size:14px">
-          We predict upgrade probability with discount=0 and discount=1 using your fitted logistic regression.
+          We predict upgrade probability with Discount = 0 (No discount applied) and Discount = 1 (Discount applied) using CRUSHR's fitted logistic regression.
           If discount lifts probability to <strong>≥ 50%</strong> (and baseline &lt; 50%), we say <em>Offer discount</em>.
           If baseline is already ≥ 50%, we say <em>No discount needed</em>. Otherwise, <em>Not sufficient</em>.
         </p>
@@ -258,7 +255,7 @@
     </div>
 
     <footer>
-      Built for internal demo • Animated background • Ripple button • Confetti on win 🎉
+      GET CRUSHR FOR ATLASSIAN TODAY 🎉🎉🎉
     </footer>
   </div>
 
