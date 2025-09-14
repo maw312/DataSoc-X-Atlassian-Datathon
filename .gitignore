@@ -3,3 +3,4 @@
 *.zip
 *.pkl
 *.mp4
+.DS_Store
