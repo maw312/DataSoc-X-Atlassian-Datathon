@@ -51,15 +51,15 @@ def index():
             # - Else                                         -> Discount not sufficient
             if p_no_disc >= 0.5:
                 decision = "no_discount_needed"
-                decision_text = "No discount needed (already ≥ 50%)"
+                decision_text = "No Discount Needed!"
                 tone = "good"
             elif p_with_disc >= 0.5:
                 decision = "offer_discount"
-                decision_text = "Offer discount (lifts to ≥ 50%)"
+                decision_text = "Offer Discount!"
                 tone = "ok"
             else:
                 decision = "not_enough"
-                decision_text = "Discount not sufficient (< 50%)"
+                decision_text = "Discount Not Sufficient"
                 tone = "bad"
 
             result = {
