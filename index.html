@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Discount Helper — Upgrade Probability</title>
+  <style>
+    :root{
+      --B900:#172B4D; --B700:#0747A6; --B600:#0052CC; --B500:#0065FF; --B300:#2684FF;
+      --G400:#36B37E; --Y400:#FFAB00; --R400:#FF5630;
+      --N0:#FFFFFF; --N10:#FAFBFC; --N20:#F4F5F7; --N30:#EBECF0; --N90:#A5ADBA; --NK:#091E42;
+
+      --ink: var(--N0);
+      --card: #0c1633;
+      --ring: rgba(38,132,255,.45);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; color:var(--ink);
+      font:500 16px/1.55 ui-sans-serif, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial;
+      overflow-x:hidden; background:#071a3a;
+    }
+
+    /* === Animated gradient background === */
+    .bg {
+      position: fixed; inset:0; z-index:-3;
+      background: linear-gradient(120deg,#071a3a,#0b2a72,#0d3aa6,#0b2a72,#071a3a);
+      background-size: 300% 300%;
+      animation: flow 22s ease-in-out infinite;
+      filter: saturate(1.15);
+    }
+    @keyframes flow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+    /* Blobby lights */
+    .blobs{position: fixed; inset:0; z-index:-2; pointer-events:none; overflow:hidden;}
+    .blob{
+      position:absolute; width:520px; height:520px; border-radius:50%;
+      filter: blur(50px) saturate(1.2);
+      opacity:.5; mix-blend-mode:screen;
+      background: radial-gradient(circle at 30% 30%, rgba(38,132,255,.9), rgba(0,101,255,.35), transparent 70%);
+      animation: floaty 24s ease-in-out infinite;
+    }
+    .blob.b2{right:-6%; top:12%; animation-duration: 28s}
+    .blob.b3{left:50%; bottom:-10%; transform:translateX(-50%); animation-duration: 32s}
+    @keyframes floaty{0%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.05)}100%{transform:translateY(0) scale(1)}}
+
+    .wrap{max-width:1050px; margin:0 auto; padding:28px 18px 90px}
+    .topbar{
+      color:#eaf2ff;
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      padding:14px 16px; margin:10px 0 24px;
+      border:1px solid rgba(255,255,255,.25); border-radius:16px; backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      box-shadow: 0 8px 30px rgba(0,0,0,.25);
+    }
+    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.2px}
+    .badge{width:36px; height:36px; border-radius:12px; background:#1f4fd6; display:grid; place-items:center;
+      color:#fff; font-weight:900; box-shadow: 0 6px 18px rgba(38,132,255,.55);}
+    .links{display:flex; gap:14px; opacity:.9}
+    .links a{color:#eaf2ff; text-decoration:none}
+    .links a:hover{text-decoration:underline}
+
+    .grid{display:grid; gap:22px}
+    @media (min-width: 980px){
+      .grid{grid-template-columns: 1.05fr .95fr;}
+    }
+
+    .panel{
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(8,18,54,.35));
+      border-radius:18px; padding:18px;
+      box-shadow: 0 12px 36px rgba(3,8,30,.55);
+    }
+
+    h1{margin:0 0 6px; font-size:40px; line-height:1.1; letter-spacing:.2px}
+    .lead{color:#cfe0ff; margin:0 0 14px}
+
+    label{font-size:13px; color:#cfe0ff; display:block; margin:10px 0 6px;}
+    input[type="number"]{
+      width:100%; padding:12px 12px; border-radius:12px; border:1px solid #3a4b84;
+      background: rgba(255,255,255,.06); color:#f3f6ff; outline:none;
+      transition:border-color .15s, box-shadow .15s, transform .04s ease;
+    }
+    input[type="number"]:focus{
+      border-color:#5c8cff; box-shadow:0 0 0 4px var(--ring);
+    }
+
+    .row{display:grid; gap:14px}
+    @media (min-width:700px){.row.two{grid-template-columns:1fr 1fr}}
+
+    .btn{
+      position:relative;
+      display:inline-grid; place-items:center;
+      min-width: 180px;
+      padding:12px 16px; border-radius:12px; cursor:pointer;
+      background: linear-gradient(180deg, var(--B300), var(--B600));
+      color:white; font-weight:800; letter-spacing:.2px; border:0;
+      box-shadow: 0 10px 24px rgba(38,132,255,.45), inset 0 -2px 0 rgba(0,0,0,.25);
+      transition: transform .05s ease, filter .15s ease;
+      overflow:hidden;
+    }
+    .btn:hover{filter:brightness(1.05)}
+    .btn:active{transform:translateY(1px)}
+    .ripple{position:absolute; border-radius:50%; transform:scale(0);
+      background:rgba(255,255,255,.5); animation:ripple 600ms linear; pointer-events:none;}
+    @keyframes ripple{to{transform:scale(4); opacity:0}}
+
+    .spinner{display:none; width:18px; height:18px; border-radius:50%;
+      border:3px solid rgba(255,255,255,.45); border-top-color:#fff; animation:spin .9s linear infinite; margin-right:8px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .btn.loading .spinner{display:inline-block}
+    .btn.loading .btntxt{opacity:.85}
+
+    .result{
+      display:none; margin-top:16px;
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(2,8,30,.55), rgba(2,8,30,.4));
+      border-radius:16px; padding:16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.45);
+      transform-origin: 50% 0; animation: pop .35s cubic-bezier(.16,1,.3,1) both;
+    }
+    .result.show{display:block}
+    @keyframes pop{from{opacity:0; transform:scale(.96)}to{opacity:1; transform:scale(1)}}
+
+    .bars{display:grid; gap:12px; margin:10px 0}
+    .bar{background:#0b1333; border:1px solid #2a3a78; border-radius:999px; overflow:hidden; height:16px; position:relative}
+    .bar > span{
+      position:absolute; inset:0 100% 0 0; background: linear-gradient(90deg, rgba(38,132,255,.3), rgba(38,132,255,.95));
+      box-shadow: 0 0 24px rgba(38,132,255,.6);
+      transition: inset .7s cubic-bezier(.16,1,.3,1);
+    }
+    .rowcap{display:flex; align-items:center; justify-content:space-between; gap:10px; color:#cfe0ff}
+    .pill{display:inline-flex; align-items:center; gap:8px; font-weight:800; color:var(--N0);
+      padding:8px 12px; border-radius:12px;}
+
+    .good{background: linear-gradient(180deg, var(--G400), #2e9e6c)}
+    .ok{background: linear-gradient(180deg, var(--Y400), #d18a00)}
+    .bad{background: linear-gradient(180deg, var(--R400), #cc4728)}
+
+    .err{margin-top:12px; color:#ffd0d0; background:rgba(255,86,48,.12); border:1px solid rgba(255,86,48,.45); padding:10px 12px; border-radius:12px}
+
+    footer{margin-top:22px; color:#b9c7e6; opacity:.9}
+    a{color:#e7f0ff; text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    /* confetti bits */
+    .confetti{position:fixed; inset:0; pointer-events:none; z-index:10; overflow:hidden}
+    .confetti i{position:absolute; width:8px; height:12px; opacity:0; transform:translateY(-20px) rotate(0deg)}
+  </style>
+</head>
+<body>
+  <div class="bg"></div>
+  <div class="blobs">
+    <div class="blob b1" style="left:-8%; top:-6%"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="topbar panel">
+      <div class="brand">
+        <div class="badge">A</div>
+        <div>Discount Helper — Upgrade Probability</div>
+      </div>
+      <div class="links">
+        <a href="#">Docs</a><a href="#">Models</a><a href="#">Team</a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section class="panel">
+        <h1>Should we offer a discount?</h1>
+        <p class="lead">Enter current stats. We’ll estimate upgrade probability with and without a discount, and make a recommendation.</p>
+
+        <form method="POST" action="/" id="form">
+          <div class="row two">
+            <div>
+              <label>Active seats</label>
+              <input name="seats" type="number" min="0" step="1" placeholder="e.g. 12" required>
+            </div>
+            <div>
+              <label>Support tickets (period)</label>
+              <input name="support_tickets" type="number" min="0" step="1" placeholder="e.g. 3" required>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <div>
+              <label>Total actions / events (period)</label>
+              <input name="total" type="number" min="0" step="1" placeholder="e.g. 480" required>
+            </div>
+          </div>
+
+          <div style="margin-top:14px; display:flex; gap:12px; align-items:center">
+            <button class="btn" id="btn" type="submit">
+              <span class="spinner" aria-hidden="true"></span>
+              <span class="btntxt">Calculate</span>
+            </button>
+            <span style="color:#cfe0ff; font-size:14px">We never ask if discount is applied; we model both scenarios for you.</span>
+          </div>
+        </form>
+
+        {% if error %}
+          <div class="err">{{ error }}</div>
+        {% endif %}
+
+        <div id="result" class="result {% if result %}show{% endif %}">
+          {% if result %}
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap">
+              <div style="font-weight:800; letter-spacing:.2px">Predicted upgrade probabilities</div>
+              <div class="pill {{ result.tone }}">{{ result.decision_text }}</div>
+            </div>
+
+            <div class="bars">
+              <div class="rowcap"><div>Upgrade (no discount)</div><div>{{ (result.p_no_disc*100)|round(1) }}%</div></div>
+              <div class="bar"><span style="inset:0 {{ (100 - result.p_no_disc*100)|round(1) }}% 0 0"></span></div>
+
+              <div class="rowcap"><div>Upgrade (with discount)</div><div>{{ (result.p_with_disc*100)|round(1) }}%</div></div>
+              <div class="bar"><span style="inset:0 {{ (100 - result.p_with_disc*100)|round(1) }}% 0 0"></span></div>
+
+              <div class="rowcap"><div>Δ Lift from discount</div><div>{{ (result.delta*100)|round(1) }} pp</div></div>
+              <div class="bar">
+                <span style="inset:0 {{ (100 - (((result.delta if result.delta > 0 else 0)*100))|round(1)) }}% 0 0;
+                              background:linear-gradient(90deg, rgba(54,179,126,.3), rgba(54,179,126,.95))"></span>
+              </div>
+            </div>
+
+            <div style="display:grid; gap:8px; grid-template-columns: repeat(3, minmax(0,1fr)); margin-top:12px">
+              <div class="panel" style="padding:12px">
+                <div style="font-size:12px; color:#b9c7e6">Seats</div>
+                <div style="font-weight:800">{{ result.inputs.seats }}</div>
+              </div>
+              <div class="panel" style="padding:12px">
+                <div style="font-size:12px; color:#b9c7e6">Support tickets</div>
+                <div style="font-weight:800">{{ result.inputs.support_tickets }}</div>
+              </div>
+              <div class="panel" style="padding:12px">
+                <div style="font-size:12px; color:#b9c7e6">Total actions</div>
+                <div style="font-weight:800">{{ result.inputs.total }}</div>
+              </div>
+            </div>
+          {% else %}
+            <div style="color:#cfe0ff">No prediction yet — submit the form to see probabilities.</div>
+          {% endif %}
+        </div>
+      </section>
+
+      <aside class="panel">
+        <h2 style="margin:0 0 8px">Decision rule</h2>
+        <p class="lead" style="margin:0 0 10px; font-size:14px">
+          We predict upgrade probability with discount=0 and discount=1 using your fitted logistic regression.
+          If discount lifts probability to <strong>≥ 50%</strong> (and baseline &lt; 50%), we say <em>Offer discount</em>.
+          If baseline is already ≥ 50%, we say <em>No discount needed</em>. Otherwise, <em>Not sufficient</em>.
+        </p>
+      </aside>
+    </div>
+
+    <footer>
+      Built for internal demo • Animated background • Ripple button • Confetti on win 🎉
+    </footer>
+  </div>
+
+  <div class="confetti" id="confetti"></div>
+
+  <script>
+    const btn = document.getElementById('btn');
+    const form = document.getElementById('form');
+    const resultCard = document.getElementById('result');
+
+    // Ripple + loading
+    btn.addEventListener('click', (e) => {
+      const r = document.createElement('span');
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      r.className = 'ripple';
+      r.style.width = r.style.height = size + 'px';
+      r.style.left = (e.clientX - rect.left - size/2) + 'px';
+      r.style.top  = (e.clientY - rect.top  - size/2) + 'px';
+      btn.appendChild(r);
+      setTimeout(()=>r.remove(), 600);
+    });
+
+    form.addEventListener('submit', () => {
+      btn.classList.add('loading');
+      setTimeout(()=>btn.classList.remove('loading'), 1000);
+    });
+
+    // Auto-scroll
+    if (resultCard && resultCard.classList.contains('show')) {
+      setTimeout(()=>{ resultCard.scrollIntoView({behavior:'smooth', block:'start'}) }, 120);
+    }
+
+    // Confetti on "offer discount" or "no discount needed"
+    {% if result and (result.decision == 'offer_discount' or result.decision == 'no_discount_needed') %}
+    const cf = document.getElementById('confetti');
+    const N = 80;
+    for (let i=0;i<N;i++){
+      const p = document.createElement('i');
+      p.style.left = (Math.random()*100) + '%';
+      p.style.top = '-10px';
+      p.style.opacity = 1;
+      p.style.background = `hsl(${Math.floor(180+Math.random()*160)}, 90%, 60%)`;
+      p.style.transform = `translateY(-20px) rotate(${Math.random()*180}deg)`;
+      cf.appendChild(p);
+      const dx = (Math.random()*2 - 1) * 40; // sway
+      const dur = 1200 + Math.random()*1400;
+      const rot = 360 + Math.random()*360;
+      p.animate([
+        { transform: `translate(${0}px, -20px) rotate(0deg)`, opacity:1 },
+        { transform: `translate(${dx}px, 110vh) rotate(${rot}deg)`, opacity:0.9 }
+      ], { duration: dur, easing:'cubic-bezier(.2,.9,.2,1)' });
+      setTimeout(()=>p.remove(), dur+100);
+    }
+    {% endif %}
+  </script>
+</body>
+</html>
